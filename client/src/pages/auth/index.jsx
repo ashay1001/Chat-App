@@ -8,9 +8,11 @@ import { toast } from "sonner";
 import apiClient from "@/lib/api-client";
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constants";
 import { useNavigate } from "react-router-dom";
+import { useAppStore } from "@/store";
 function Auth() {
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { setUserInfo } = useAppStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -47,6 +49,7 @@ function Auth() {
     if(validateLogin) {
       const response = await apiClient.post(LOGIN_ROUTE, {email, password}, {withCredentials: true});
       if(response.data.user.id) {
+        setUserInfo(response.data.user);
         if(response.data.user.profileSetup) {
           navigate("/chat");
         }
@@ -63,6 +66,7 @@ function Auth() {
       const response = await apiClient.post(SIGNUP_ROUTE, {email, password}, {withCredentials: true});
       console.log(response);
       if(response.status === 201) {
+        setUserInfo(response.data.user);
         navigate("/profile");
       }
     }
@@ -77,7 +81,7 @@ function Auth() {
               <h1 className="text-5xl font-bold text-purple-700 md:text-6xl">Welcome</h1>
               <img src={Chat} alt="Chat Emoji" className="h-[70px]" />
             </div>
-            <p className="font-medium text-center"> Fill the details to get started!</p>
+            <p className="font-medium text-center"> Let&apos;s get started!</p>
           </div>
           <div className="flex items-center justify-center w-full">
             <Tabs className="w-3/4" defaultValue="login">
